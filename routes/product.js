@@ -1,12 +1,18 @@
 const router = require("express").Router();
+const Product = require("../models/Product");
+const { verifyTokenAndAdmin } = require("./verifyToken");
 
-router.get("/get", (req, res) => {
-   res.send("Get user success!");
-});
+//CREATE PRODUCT
+router.post("/", verifyTokenAndAdmin, async (req, res) => {
+   const newProduct = new Product(req.body);
 
-router.post("/post", (req, res) => {
-   const username = req.body.username;
-   res.send("Username: " + username);
+   try {
+      const savedProduct = await newProduct.save();
+      res.status(200).json(savedProduct);
+      
+   } catch (error) {
+      res.status(500).json(error);
+   }
 });
 
 module.exports = router;
